@@ -1,0 +1,4 @@
+# Cloudflare Pages redirects — https://developers.cloudflare.com/pages/configuration/redirects/
+# Friendly clean-URL aliases for the dashboard.
+/app        /app.html        301
+/dashboard  /app.html        301

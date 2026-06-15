@@ -1,0 +1,58 @@
+name: Update change data
+
+# Fetches the public Microsoft 365 roadmap (and, if secrets are configured, the
+# tenant Message Center), rebuilds data/changes.js and commits it. The commit
+# push triggers an automatic Cloudflare Pages deploy — no Cloudflare credentials
+# are needed in GitHub.
+
+on:
+  schedule:
+    # Daily at 06:00 UTC. Microsoft refreshes the roadmap on weekdays.
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+# Avoid overlapping runs racing on the same commit.
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch public M365 roadmap
+        run: node scripts/fetch-roadmap.mjs
+
+      - name: Fetch tenant Message Center (optional — no-op without secrets)
+        env:
+          MC_TENANT_ID: ${{ secrets.MC_TENANT_ID }}
+          MC_CLIENT_ID: ${{ secrets.MC_CLIENT_ID }}
+          MC_CLIENT_SECRET: ${{ secrets.MC_CLIENT_SECRET }}
+        run: node scripts/fetch-mc.mjs
+
+      - name: Build index
+        run: node scripts/build-data.mjs
+
+      - name: Commit & push if changed
+        run: |
+          rm -f data/raw/mc/*.json   # tenant MC pulls are merged into changes.js, never committed
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/changes.js data/raw/roadmap.json
+          if git diff --staged --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "chore(data): refresh M365 change digest ($(date -u +%Y-%m-%d))"
+            git push
+          fi

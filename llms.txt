@@ -1,0 +1,25 @@
+# MCD — M365 Change Digest
+
+> A free, 100% client-side dashboard that tracks every Microsoft 365 change from
+> the public Microsoft 365 roadmap (and, optionally, a tenant's Message Center).
+> Filter by product, status, release phase, cloud and platform; search; and view
+> a release timeline per product. Auto-updated daily via a GitHub Action and
+> deployed on Cloudflare Pages.
+
+## What it is
+- An independent project (not affiliated with Microsoft) in the msnugget family, alongside cmtrace.dev and MSFinder.
+- Static site: HTML + CSS + ES5-style vanilla JavaScript on the `window.MCD` namespace. No framework, no build step for the running app.
+- The whole searchable index ships with the page; all filtering/search runs locally in the browser.
+
+## Data
+- Source of truth: the public Microsoft 365 roadmap (release-communications API). Data is © Microsoft.
+- Optional: a tenant's Message Center via Microsoft Graph (ServiceMessage.Read.All), merged into the same index. Off by default.
+- `scripts/fetch-roadmap.mjs` fetches the roadmap; `scripts/build-data.mjs` normalizes and writes `data/changes.js` (`window.MCD.DATA` / `PRODUCTS` / `META`).
+
+## Key pages
+- `/` (index.html): marketing landing with a live "latest changes" demo.
+- `/app.html`: the full dashboard — search, faceted filters, list view and per-product timeline, detail drawer.
+
+## Links
+- Source: https://github.com/FlorianSLZ/MCD
+- Microsoft 365 roadmap: https://www.microsoft.com/microsoft-365/roadmap

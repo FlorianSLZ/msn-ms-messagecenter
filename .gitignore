@@ -1,0 +1,22 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+.idea/
+.vscode/
+
+# Node
+node_modules/
+
+# Local secrets for the optional Message Center (Graph) fetch — never commit
+.env
+.env.*
+!.env.example
+
+# data/ is generated and committed (the build output is part of the deploy):
+#   data/raw/roadmap.json  — fetched M365 public roadmap (committed by the Action)
+#   data/changes.js        — generated index loaded by the app (committed)
+# Tenant Message Center raw pulls are kept out of git by default; enable in CI:
+data/raw/mc/*.json
+!data/raw/mc/.gitkeep

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Resolve the saved theme before first paint to avoid a dark→light flash. -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('mcd-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Primary SEO -->
+  <title>MCD — M365 Change Digest · Track every Microsoft 365 change</title>
+  <meta name="description" content="MCD (M365 Change Digest) tracks every Microsoft 365 change in one fast, clear dashboard. Filter by product, status and cloud, search across 1,800+ roadmap items, and see a release timeline per product. Auto-updated daily, 100% client-side." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://mcd.dev/" />
+  <meta name="theme-color" content="#39A751" />
+  <meta name="color-scheme" content="dark light" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MCD — M365 Change Digest" />
+  <meta property="og:description" content="Track every Microsoft 365 change in one clear dashboard: filter by product, status and cloud, search, and see a release timeline per product. Auto-updated daily, 100% client-side." />
+  <meta property="og:url" content="https://mcd.dev/" />
+  <meta property="og:image" content="https://mcd.dev/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="MCD — M365 Change Digest" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MCD — M365 Change Digest" />
+  <meta name="twitter:description" content="Every Microsoft 365 change in one dashboard — filter by product, status & cloud, search, and a release timeline per product. Auto-updated daily, 100% client-side." />
+  <meta name="twitter:image" content="https://mcd.dev/og-image.png" />
+
+  <link rel="icon" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+
+  <link rel="preload" href="assets/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/landing.css" />
+
+  <!-- Structured data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MCD — M365 Change Digest",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web browser",
+    "url": "https://mcd.dev/",
+    "description": "A free, 100% client-side dashboard that tracks every Microsoft 365 change from the public roadmap (and, optionally, a tenant's Message Center). Filter by product, status, cloud and platform, search, and see a release timeline per product. Auto-updated daily via a GitHub Action.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": [
+      "Tracks every Microsoft 365 roadmap change in one dashboard",
+      "Filter by product, status, release phase, cloud and platform",
+      "Release timeline per product",
+      "Fast client-side search across 1,800+ changes",
+      "Auto-updated daily via GitHub Actions",
+      "Optional tenant Message Center feed via Microsoft Graph",
+      "100% client-side and private",
+      "Installable Progressive Web App that works offline",
+      "Open source"
+    ]
+  }
+  </script>
+
+  <!-- Structured data: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Where does the data come from?", "acceptedAnswer": { "@type": "Answer", "text": "MCD is built primarily from Microsoft's public Microsoft 365 roadmap (the release-communications feed). You can optionally fold in your own tenant's Message Center posts via Microsoft Graph. The data is © Microsoft; MCD just organizes it." } },
+      { "@type": "Question", "name": "How often is it updated?", "acceptedAnswer": { "@type": "Answer", "text": "A GitHub Action fetches the roadmap on a daily schedule, rebuilds the index and commits it, which triggers an automatic Cloudflare Pages deploy. The build date is shown in the app's status bar." } },
+      { "@type": "Question", "name": "Is MCD affiliated with Microsoft?", "acceptedAnswer": { "@type": "Answer", "text": "No. MCD is an independent project and is not affiliated with, endorsed by or sponsored by Microsoft. It only links to official Microsoft roadmap and admin pages." } },
+      { "@type": "Question", "name": "Is it free and private?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. MCD is completely free and open source. The whole index ships with the page, so all filtering and search happen locally in your browser — nothing you type is sent anywhere." } },
+      { "@type": "Question", "name": "Can I see my own tenant's Message Center?", "acceptedAnswer": { "@type": "Answer", "text": "Optionally. A separate, secrets-gated GitHub Action can pull your tenant's Message Center via Microsoft Graph (ServiceMessage.Read.All) and merge it into the digest. It is off by default and only your deployment ever sees that data." } }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============================ HEADER ============================ -->
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="MCD home">
+        <svg class="brand-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="1" y="1" width="30" height="30" rx="8" fill="#39A751"/>
+          <g fill="#ffffff"><rect x="6.5" y="18" width="4.3" height="7.5" rx="1.3"/><rect x="13.85" y="13" width="4.3" height="12.5" rx="1.3" opacity=".9"/><rect x="21.2" y="9.5" width="4.3" height="16" rx="1.3" opacity=".8"/></g>
+          <circle cx="23.35" cy="6.2" r="2.2" fill="#ffffff"/>
+        </svg>
+        <span><span class="brand-name">M</span><span class="brand-dev">CD</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#coverage">Coverage</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://msnugget.com/" target="_blank" rel="noopener">msnugget &#8599;</a></li>
+          <li>
+            <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle dark and light theme">
+              <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"/></g></svg>
+              <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </button>
+          </li>
+          <li><a class="btn btn-primary btn-sm" href="app.html">Open dashboard</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============================ HERO ============================ -->
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <span class="hero-badge"><span class="dot" aria-hidden="true"></span> Small nuggets. Big impact.</span>
+      <h1 id="hero-title">Every Microsoft&nbsp;365 change, <span class="accent">in one place.</span></h1>
+      <p class="hero-sub">
+        Stop scrolling the roadmap. MCD tracks every Microsoft&nbsp;365 change and lays it out
+        clearly — filter by product, status and cloud, search instantly, and follow a
+        release timeline for each product.
+      </p>
+
+      <!-- Live mini-search demo (real, uses MCD.search over the shipped index) -->
+      <div class="demo" id="demo">
+        <form class="demo-form" id="demo-form" role="search" autocomplete="off" aria-label="Search Microsoft 365 changes">
+          <svg class="demo-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input type="search" id="demo-input" class="demo-input" placeholder="Try “Copilot”, “retention”, “conditional access”…" aria-label="Search Microsoft 365 changes" spellcheck="false" enterkeyhint="search" />
+          <kbd class="demo-kbd" aria-hidden="true">↵</kbd>
+        </form>
+        <div class="demo-filters">
+          <div class="demo-types" id="demo-status" role="group" aria-label="Filter by status">
+            <button type="button" class="demo-chip is-active" data-status="" aria-pressed="true">All</button>
+            <button type="button" class="demo-chip" data-status="In development" aria-pressed="false">In development</button>
+            <button type="button" class="demo-chip" data-status="Rolling out" aria-pressed="false">Rolling out</button>
+            <button type="button" class="demo-chip" data-status="Launched" aria-pressed="false">Launched</button>
+          </div>
+        </div>
+        <div class="demo-results" id="demo-results" aria-label="Matching changes"></div>
+        <p class="demo-foot" id="demo-foot">
+          <span class="demo-foot-count" id="demo-count"></span>
+          <a class="demo-foot-link" href="app.html">Open the full dashboard &rarr;</a>
+        </p>
+      </div>
+
+      <div class="status-legend" aria-hidden="true">
+        <span><i class="lg-dev"></i> In development</span>
+        <span><i class="lg-rolling"></i> Rolling out</span>
+        <span><i class="lg-launched"></i> Launched</span>
+      </div>
+
+      <p class="trust-line">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l8 3v6c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V5l8-3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 12l2.4 2.4L16 9.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Runs entirely in your browser — the whole index ships with the page.
+      </p>
+    </section>
+
+    <!-- ============================ STATS ============================ -->
+    <section class="stats" aria-label="At a glance">
+      <div class="wrap stats-grid">
+        <div class="stat"><span class="num" id="stat-count">1,800<span class="accent">+</span></span><span class="label">Changes tracked</span></div>
+        <div class="stat"><span class="num" id="stat-products">37</span><span class="label">Products covered</span></div>
+        <div class="stat"><span class="num">Daily</span><span class="label">Auto-updated pipeline</span></div>
+        <div class="stat"><span class="num"><span class="accent">$0</span></span><span class="label">Free &amp; open source</span></div>
+      </div>
+    </section>
+
+    <!-- ============================ FEATURES ============================ -->
+    <section id="features" aria-labelledby="features-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Features</span>
+          <h2 id="features-title">The Microsoft 365 roadmap, finally readable</h2>
+          <p class="lead">One dashboard for every change Microsoft ships — organized the way admins actually work.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4v16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="5" cy="8" r="2.1" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="5" cy="16" r="2.1" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 8h11M9 16h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <h3>Timeline per product</h3>
+            <p>See a release schedule for each product — changes laid out across calendar quarters and colour-coded by status.</p>
+          </article>
+
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16l-6 7v5l-4 2v-7L4 6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+            <h3>Filter everything</h3>
+            <p>Slice by product, status, release phase, platform and cloud. Filters combine, counts update live, and every view is shareable by URL.</p>
+          </article>
+
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <h3>Instant search</h3>
+            <p>Type any feature, product or keyword and MCD ranks the matching changes across 1,800+ items — typo- and acronym-tolerant.</p>
+          </article>
+
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>Auto-updated daily</h3>
+            <p>A GitHub Action pulls the roadmap every day, rebuilds the index and deploys — so the digest is always fresh, with zero manual work.</p>
+          </article>
+
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 10h2M11 10h2M15 10h2M8 14h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <h3>Status at a glance</h3>
+            <p>Every change is tagged In development, Rolling out or Launched, with availability and preview dates surfaced right on the card.</p>
+          </article>
+
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.4-3 7.6-8 9-5-1.4-8-4.6-8-9V6l8-3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>100% client-side &amp; private</h3>
+            <p>The whole index ships with the page. Nothing you search or filter is sent anywhere — safe to use against any tenant.</p>
+          </article>
+
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <h3>Installable PWA, offline</h3>
+            <p>Install MCD like a desktop app. The index is bundled, so it keeps working with no network connection at all.</p>
+          </article>
+
+          <article class="card feature">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>Open &amp; extensible</h3>
+            <p>A single static folder with a plain-text index. Host it anywhere, and optionally merge your own tenant's Message Center via Graph.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ HOW IT WORKS ============================ -->
+    <section id="how" class="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">How it works</span>
+          <h2 id="how-title">A pipeline that keeps itself current</h2>
+          <p class="lead">From Microsoft's roadmap to a clean, searchable dashboard — automatically, every day.</p>
+        </div>
+
+        <ol class="steps">
+          <li class="card step">
+            <span class="step-num">1</span>
+            <h3>Fetch the roadmap</h3>
+            <p>A scheduled GitHub Action pulls Microsoft's public Microsoft 365 release-communications feed — no credentials, no scraping.</p>
+          </li>
+          <li class="card step">
+            <span class="step-num">2</span>
+            <h3>Build &amp; deploy</h3>
+            <p>A deterministic build normalizes products, statuses and dates into one index, commits it, and Cloudflare Pages deploys the update.</p>
+          </li>
+          <li class="card step">
+            <span class="step-num">3</span>
+            <h3>Browse the digest</h3>
+            <p>Open the dashboard to filter, search and follow each product's timeline — all rendered instantly in your browser.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================ COVERAGE ============================ -->
+    <section id="coverage" class="categories" aria-labelledby="cov-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Coverage</span>
+          <h2 id="cov-title">Every Microsoft 365 product</h2>
+          <p class="lead">From Copilot and Teams to Purview, Intune and Entra — every product on the roadmap, with its change count.</p>
+        </div>
+        <div class="cat-grid" id="cat-grid" aria-label="Products covered"></div>
+      </div>
+    </section>
+
+    <!-- ============================ FAQ ============================ -->
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">FAQ</span>
+          <h2 id="faq-title">Frequently asked questions</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Where does the data come from?<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+            <p class="faq-answer">MCD is built primarily from Microsoft's public Microsoft 365 roadmap (the release-communications feed). You can optionally fold in your own tenant's Message Center posts via Microsoft Graph. The data is © Microsoft — MCD just organizes and links to it.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How often is it updated?<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+            <p class="faq-answer">A GitHub Action fetches the roadmap on a daily schedule, rebuilds the index and commits it, which triggers an automatic Cloudflare Pages deploy. The build date is shown in the app's status bar.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is MCD affiliated with Microsoft?<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+            <p class="faq-answer">No. MCD is an independent project and is not affiliated with, endorsed by or sponsored by Microsoft. It only links to official Microsoft roadmap and admin pages.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is it free and private?<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+            <p class="faq-answer">Yes. MCD is completely free and open source. The whole index ships with the page, so all filtering and search happen locally in your browser — nothing you type is ever sent to a server.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I see my own tenant's Message Center?<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+            <p class="faq-answer">Optionally. A separate, secrets-gated GitHub Action can pull your tenant's Message Center via Microsoft Graph (ServiceMessage.Read.All) and merge it into the digest. It's off by default, and only your own deployment ever sees that data.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ FINAL CTA ============================ -->
+    <section class="cta-final wrap" aria-labelledby="cta-title">
+      <div class="cta-card">
+        <span class="eyebrow">Ready when you are</span>
+        <h2 id="cta-title">Stay ahead of every M365 change</h2>
+        <p class="lead">No install, no accounts, nothing sent anywhere. Open MCD and see what's shipping.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="app.html">Open dashboard &rarr;</a>
+          <a class="btn btn-ghost" href="#features">See what it can do</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <a class="brand" href="/" aria-label="MCD home">
+          <svg class="brand-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+            <rect x="1" y="1" width="30" height="30" rx="8" fill="#39A751"/>
+            <g fill="#ffffff"><rect x="6.5" y="18" width="4.3" height="7.5" rx="1.3"/><rect x="13.85" y="13" width="4.3" height="12.5" rx="1.3" opacity=".9"/><rect x="21.2" y="9.5" width="4.3" height="16" rx="1.3" opacity=".8"/></g>
+            <circle cx="23.35" cy="6.2" r="2.2" fill="#ffffff"/>
+          </svg>
+          <span><span class="brand-name">M</span><span class="brand-dev">CD</span></span>
+        </a>
+        <ul class="footer-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#coverage">Coverage</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="app.html">Open dashboard</a></li>
+          <li><a href="https://msnugget.com/" target="_blank" rel="noopener">msnugget &#8599;</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        <p class="disclaimer">Built by <a href="https://scloud.work/about-florian/" target="_blank" rel="noopener">Florian Salzmann</a> &amp; <a href="https://jannikreinhard.com/about/" target="_blank" rel="noopener">Jannik Reinhard</a></p>
+        <p class="disclaimer">Roadmap data &copy; Microsoft. Independent project — not affiliated with Microsoft.</p>
+        <p class="disclaimer">&copy; <span id="year">2026</span> MCD</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Load order per contract: util, icons, data, search, landing -->
+  <script src="js/util.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="data/changes.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>

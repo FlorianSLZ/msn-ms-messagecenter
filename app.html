@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="MCD — M365 Change Digest. Track every Microsoft 365 change in one dashboard: filter by product, status and cloud, search, and see a release timeline per product. 100% in your browser." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://mcd.dev/app.html" />
+  <title>MCD — M365 Change Digest</title>
+  <!-- Paint black immediately so there is no light flash before CSS applies. -->
+  <style>html,body{background:#000000;}</style>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('mcd-theme');
+        if (t !== 'light' && t !== 'dark') t = 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/manrope.woff2" crossorigin />
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#39A751" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============================ TOOLBAR ============================ -->
+    <header id="toolbar" role="banner">
+      <button type="button" id="btn-filters-m" class="tb-btn btn-filters-m" aria-label="Show filters" title="Show filters">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16l-6 7v5l-4 2v-7L4 6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+
+      <a class="brand-home" href="index.html" title="MCD — back to home" aria-label="MCD home">
+        <svg class="brand-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="1" y="1" width="30" height="30" rx="8" fill="#39A751"/>
+          <g fill="none" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round">
+            <path d="M7 21V11l5 6 5-6v10" opacity=".95"/>
+          </g>
+          <circle cx="22.5" cy="20.5" r="3.1" fill="none" stroke="#ffffff" stroke-width="2"/>
+          <line x1="24.8" y1="22.8" x2="27" y2="25" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-wordmark"><span class="brand-name">M</span><span class="brand-dev">CD</span><span class="brand-tag">· Change Digest</span></span>
+      </a>
+
+      <span class="tb-spacer" aria-hidden="true"></span>
+
+      <div class="seg" id="view-toggle" role="group" aria-label="View">
+        <button type="button" class="is-active" data-view="list" aria-pressed="true">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span class="lbl">List</span>
+        </button>
+        <button type="button" data-view="timeline" aria-pressed="false">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="5" cy="8" r="2.1" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="5" cy="16" r="2.1" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 8h11M9 16h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="lbl">Timeline</span>
+        </button>
+      </div>
+
+      <div class="tb-group" role="group" aria-label="Application">
+        <button type="button" id="btn-theme" class="tb-btn" title="Toggle light / dark theme" aria-label="Toggle light / dark theme" aria-pressed="false">
+          <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13.5A8 8 0 0 1 10.5 4 8 8 0 1 0 20 13.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7"/><g stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="5.2" y1="5.2" x2="7" y2="7"/><line x1="17" y1="17" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17" y2="7"/><line x1="7" y1="17" x2="5.2" y2="18.8"/></g></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================ BODY ============================ -->
+    <div id="body">
+      <div id="sidebar-backdrop" aria-hidden="true"></div>
+
+      <!-- Filter sidebar (facets injected by app.js) -->
+      <aside id="sidebar" aria-label="Filters">
+        <div class="sidebar-head">
+          <h2><span class="icon" aria-hidden="true"></span> Filters</h2>
+          <button type="button" id="btn-reset" class="btn-reset" disabled>Reset</button>
+        </div>
+        <div id="facets" class="facets"></div>
+      </aside>
+
+      <!-- Main content -->
+      <section id="content">
+        <div id="content-head">
+          <div class="cb-row">
+            <form id="search-form" role="search" autocomplete="off" onsubmit="return false;" style="flex:1 1 auto;display:flex;">
+              <div id="command-bar">
+                <span class="cb-icon icon" aria-hidden="true"></span>
+                <input type="search" id="q" class="cb-input"
+                  placeholder="Search changes — try 'conditional access', 'copilot', 'retention'…"
+                  aria-label="Search Microsoft 365 changes" autocomplete="off" autocorrect="off"
+                  autocapitalize="off" spellcheck="false" autofocus />
+                <button type="button" id="q-clear" class="cb-clear" title="Clear (Esc)" aria-label="Clear search" hidden>
+                  <span class="icon" aria-hidden="true"></span>
+                </button>
+              </div>
+            </form>
+            <div class="sort-wrap">
+              <label for="sort" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Sort</label>
+              <select id="sort" class="sort-select" aria-label="Sort changes">
+                <option value="relevance">Best match</option>
+                <option value="modified">Recently updated</option>
+                <option value="created">Newest</option>
+                <option value="ga">Availability date</option>
+                <option value="az">A → Z</option>
+              </select>
+            </div>
+          </div>
+          <div id="active-chips" role="group" aria-label="Active filters"></div>
+        </div>
+
+        <div id="results-region">
+          <div id="list" aria-live="polite"></div>
+          <div id="timeline" hidden></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================ STATUS BAR ============================ -->
+    <footer id="statusbar" role="status" aria-label="Status bar">
+      <span id="status-count" class="status-item">&nbsp;</span>
+      <span class="status-spacer" aria-hidden="true"></span>
+      <span id="status-meta" class="status-item"></span>
+    </footer>
+
+  </div><!-- /#app -->
+
+  <!-- ============================ DETAIL DRAWER ============================ -->
+  <div id="overlay" aria-hidden="true"></div>
+  <aside id="drawer" role="dialog" aria-modal="true" aria-label="Change details" aria-labelledby="drawer-title" aria-hidden="true" tabindex="-1"></aside>
+
+  <!-- ============================ SCRIPTS (contract load order) ============================ -->
+  <script src="js/util.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="data/changes.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
