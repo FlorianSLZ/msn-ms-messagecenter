@@ -1,0 +1,74 @@
+/* ============================================================================
+ * MCD — css/detail.css
+ * Shared change-detail popup (centred modal). Loaded by BOTH app.html and
+ * index.html so the same popup renders on the dashboard and the landing page.
+ * Uses only colour tokens defined in BOTH css/app.css and css/landing.css;
+ * radii / shadow / spacing are literal so it looks identical on either page.
+ * ==========================================================================*/
+
+#overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+}
+#overlay.is-open { opacity: 1; pointer-events: auto; }
+
+#drawer {
+  position: fixed; left: 50%; top: 50%; z-index: 1001;
+  width: 600px; max-width: calc(100vw - 32px); max-height: calc(100dvh - 48px);
+  display: flex; flex-direction: column;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-ui, "Manrope", system-ui, sans-serif);
+  border: 1px solid var(--border-strong); border-radius: 14px; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -48%) scale(0.97); opacity: 0; pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.18s ease;
+}
+#drawer.is-open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { #drawer { transition: opacity 0.18s ease; } }
+/* focus is moved here programmatically for screen readers; no visible ring on
+   the container itself (interactive children still show their own focus ring). */
+#drawer:focus, #drawer:focus-visible { outline: none; }
+
+.drawer-head { flex: none; display: flex; align-items: flex-start; gap: 12px; padding: 16px; border-bottom: 1px solid var(--border); }
+.drawer-head h2 { margin: 0; font-size: 1.18rem; font-weight: 800; color: var(--heading); line-height: 1.25; flex: 1 1 auto; }
+.drawer-close { flex: none; display: inline-flex; padding: 7px; border-radius: 10px; border: 1px solid var(--border); color: var(--fg-dim); background: none; cursor: pointer; }
+.drawer-close:hover { background: var(--hover-bg); color: var(--fg); }
+.drawer-close svg { width: 20px; height: 20px; display: block; }
+
+.drawer-body { overflow-y: auto; padding: 16px; flex: 1 1 auto; }
+.drawer-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.drawer-desc { color: var(--fg); font-size: 0.95rem; line-height: 1.6; white-space: pre-line; }
+
+.kv { display: grid; grid-template-columns: 132px 1fr; gap: 8px 14px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.kv dt { color: var(--fg-dim); font-size: 0.82rem; font-weight: 700; }
+.kv dd { margin: 0; font-size: 0.88rem; color: var(--fg); }
+.kv dd .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-lite { display: inline-flex; padding: 2px 8px; border-radius: 999px; background: var(--bg-elev); border: 1px solid var(--border); font-size: 0.76rem; }
+
+.drawer-foot { flex: none; padding: 16px; border-top: 1px solid var(--border); display: flex; gap: 12px; }
+.det-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 10px; font-weight: 700; font-size: 0.92rem; border: 1px solid var(--border-strong); color: var(--fg); background: var(--bg-elev); cursor: pointer; text-decoration: none; }
+.det-btn:hover { background: var(--hover-bg); text-decoration: none; }
+.det-btn svg { width: 17px; height: 17px; }
+.det-btn-primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); flex: 1 1 auto; }
+.det-btn-primary:hover { filter: brightness(1.06); background: var(--accent); }
+
+/* status pill (self-contained — does not depend on app.css) */
+.det-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 0.76rem; font-weight: 700; white-space: nowrap; }
+.det-pill .det-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.det-pill[data-status="dev"]       { color: var(--st-dev); background: var(--st-dev-soft); }
+.det-pill[data-status="rolling"]   { color: var(--st-rolling); background: var(--st-rolling-soft); }
+.det-pill[data-status="launched"]  { color: var(--st-launched); background: var(--st-launched-soft); }
+.det-pill[data-status="cancelled"] { color: var(--st-cancelled); background: var(--st-cancelled-soft); }
+
+/* product badge (self-contained) */
+.det-prod { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 5px; border-radius: 999px; background: var(--bg-elev); border: 1px solid var(--border); font-size: 0.76rem; font-weight: 700; color: var(--fg); white-space: nowrap; }
+
+/* product tile — defined here too because landing.css doesn't have it */
+.prod-tile { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; font-size: 0.62rem; font-weight: 800; background: var(--prod, var(--accent)); color: #fff; letter-spacing: -0.02em; }
+.prod-tile-sm { width: 18px; height: 18px; border-radius: 5px; font-size: 0.56rem; }
+.prod-tile-lg { width: 30px; height: 30px; border-radius: 8px; font-size: 0.76rem; }
+.prod-tile-logo { background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
+.prod-tile-logo img { width: 72%; height: 72%; object-fit: contain; display: block; }
+.det-prod .prod-tile { width: 17px; height: 17px; border-radius: 4px; font-size: 0.54rem; }

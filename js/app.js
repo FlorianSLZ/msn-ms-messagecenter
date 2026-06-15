@@ -20,7 +20,6 @@
       elRegion = $('results-region'), elQ = $('q'), elClear = $('q-clear'),
       elSort = $('sort'), elChips = $('active-chips'), elReset = $('btn-reset'),
       elCount = $('status-count'), elMeta = $('status-meta'),
-      elOverlay = $('overlay'), elDrawer = $('drawer'),
       elSidebar = $('sidebar'), elBackdrop = $('sidebar-backdrop');
 
   // ---- static icon injection ----
@@ -59,9 +58,9 @@
     { key: 'platforms', label: 'Platform', field: 'platforms', values: distinct('platforms') },
     { key: 'clouds', label: 'Cloud', field: 'clouds', values: distinct('clouds') }
   ];
-  if (sources.length > 1) {
+  if (sources.length) {
     GROUPS.splice(1, 0, { key: 'source', label: 'Source', field: 'source', single: true,
-      values: sources, labels: { roadmap: 'Public roadmap', mc: 'Message Center' }, open: true });
+      values: sources, labels: { roadmap: 'Public roadmap', mc: 'Message Center' }, open: sources.length > 1 });
   }
 
   // ---------------------------------------------------------------------------
@@ -402,62 +401,15 @@
   var runDebounced = util.debounce(run, 130);
 
   // ---------------------------------------------------------------------------
-  // Detail drawer
+  // Detail popup (shared module js/detail.js)
   // ---------------------------------------------------------------------------
-  var lastFocus = null;
-
-  function tagList(arr) {
-    if (!arr || !arr.length) return '<span class="tag-lite">—</span>';
-    return '<div class="tags">' + arr.map(function (t) { return '<span class="tag-lite">' + util.escapeHtml(t) + '</span>'; }).join('') + '</div>';
-  }
-
-  function openDrawer(id) {
+  // Open the centred detail popup for a change and keep the shareable
+  // #change=<id> deep link in sync via the onClose callback.
+  function openCard(id) {
     var e = byId[id];
     if (!e) return;
-    lastFocus = document.activeElement;
-    var prodBadges = (e.products || []).map(function (p) {
-      return '<span class="badge badge-prod">' + icons.productTile(p, 'sm') + util.escapeHtml(icons.product(p).label) + '</span>';
-    }).join('');
-    var kv = '';
-    kv += '<dt>Status</dt><dd>' + statusPill(e.status) + '</dd>';
-    if (e.ga) kv += '<dt>Availability</dt><dd>' + util.escapeHtml(e.ga) + '</dd>';
-    if (e.preview) kv += '<dt>Preview</dt><dd>' + util.escapeHtml(e.preview) + '</dd>';
-    kv += '<dt>Products</dt><dd>' + tagList((e.products || []).map(function (p) { return icons.product(p).label; })) + '</dd>';
-    if (e.phases) kv += '<dt>Release phase</dt><dd>' + tagList(e.phases) + '</dd>';
-    if (e.platforms) kv += '<dt>Platforms</dt><dd>' + tagList(e.platforms) + '</dd>';
-    if (e.clouds) kv += '<dt>Clouds</dt><dd>' + tagList(e.clouds) + '</dd>';
-    kv += '<dt>Created</dt><dd>' + util.escapeHtml(util.fmtDate(e.created) || '—') + '</dd>';
-    kv += '<dt>Last updated</dt><dd>' + util.escapeHtml(util.fmtDate(e.modified) || '—') + '</dd>';
-    kv += '<dt>Source</dt><dd>' + (e.source === 'mc' ? 'Tenant Message Center' : 'Microsoft 365 public roadmap') + '</dd>';
-
-    var foot = '<a class="btn btn-primary" href="' + util.escapeAttr(e.link) + '" target="_blank" rel="noopener">' +
-      (e.source === 'mc' ? 'Open in Message Center' : 'View on Microsoft roadmap') + '<span class="icon">' + icons.svg.external + '</span></a>';
-    if (e.more) foot += '<a class="btn" href="' + util.escapeAttr(e.more) + '" target="_blank" rel="noopener">More info<span class="icon">' + icons.svg.external + '</span></a>';
-
-    elDrawer.innerHTML =
-      '<div class="drawer-head"><h2 id="drawer-title">' + util.escapeHtml(e.title) + '</h2>' +
-        '<button type="button" class="drawer-close" id="drawer-close" aria-label="Close details">' + icons.svg.close + '</button></div>' +
-      '<div class="drawer-body">' +
-        '<div class="drawer-badges">' + statusPill(e.status) + prodBadges + '</div>' +
-        '<div class="drawer-desc">' + util.escapeHtml(e.desc || 'No description provided.') + '</div>' +
-        '<dl class="kv">' + kv + '</dl>' +
-      '</div>' +
-      '<div class="drawer-foot">' + foot + '</div>';
-
-    elDrawer.setAttribute('aria-hidden', 'false');
-    elDrawer.classList.add('is-open');
-    elOverlay.classList.add('is-open');
-    $('drawer-close').addEventListener('click', closeDrawer);
-    elDrawer.focus();
-    if (state.openId !== e.id) { state.openId = e.id; writeHash(); } // shareable deep link
-  }
-
-  function closeDrawer() {
-    elDrawer.classList.remove('is-open');
-    elOverlay.classList.remove('is-open');
-    elDrawer.setAttribute('aria-hidden', 'true');
-    if (state.openId) { state.openId = null; writeHash(); }
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
+    if (state.openId !== e.id) { state.openId = e.id; writeHash(); }
+    MCD.detail.open(e, { onClose: function () { if (state.openId) { state.openId = null; writeHash(); } } });
   }
 
   // ---------------------------------------------------------------------------
@@ -530,14 +482,14 @@
     }
   }
 
-  // list / timeline clicks -> drawer or drill-down
+  // list / timeline clicks -> detail popup or drill-down
   elList.addEventListener('click', function (ev) {
-    var card = ev.target.closest('.change[data-id]'); if (card) openDrawer(card.getAttribute('data-id'));
+    var card = ev.target.closest('.change[data-id]'); if (card) openCard(card.getAttribute('data-id'));
   });
   elList.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter' && ev.key !== ' ') return;
     var card = ev.target.closest('.change[data-id]'); if (!card) return;
-    ev.preventDefault(); openDrawer(card.getAttribute('data-id'));
+    ev.preventDefault(); openCard(card.getAttribute('data-id'));
   });
   elTimeline.addEventListener('click', function (ev) {
     var more = ev.target.closest('[data-drill]');
@@ -546,10 +498,9 @@
       GROUPS.forEach(function (g) { if (g.key === 'products') state.sel.products = {}; });
       state.sel.products[p] = true; state.view = 'list'; syncViewButtons(); syncCheckboxes(); run(); return;
     }
-    var chip = ev.target.closest('.tl-chip[data-id]'); if (chip) openDrawer(chip.getAttribute('data-id'));
+    var chip = ev.target.closest('.tl-chip[data-id]'); if (chip) openCard(chip.getAttribute('data-id'));
   });
 
-  elOverlay.addEventListener('click', closeDrawer);
   $('btn-theme').addEventListener('click', function () {
     applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
   });
@@ -561,20 +512,11 @@
 
   // keyboard
   document.addEventListener('keydown', function (ev) {
+    // The detail popup (js/detail.js) handles its own Escape + focus trap.
+    if (MCD.detail && MCD.detail.isOpen()) return;
     if (ev.key === 'Escape') {
-      if (elDrawer.classList.contains('is-open')) { closeDrawer(); return; }
       if (elSidebar.classList.contains('is-open')) { toggleSidebar(false); return; }
       if (state.q) { state.q = ''; elQ.value = ''; run(); return; }
-    }
-    // Trap focus inside the open detail drawer (aria-modal dialog).
-    if (ev.key === 'Tab' && elDrawer.classList.contains('is-open')) {
-      var f = elDrawer.querySelectorAll('a[href], button:not([disabled])');
-      if (!f.length) { ev.preventDefault(); elDrawer.focus(); return; }
-      var first = f[0], last = f[f.length - 1];
-      if (!elDrawer.contains(document.activeElement)) { ev.preventDefault(); first.focus(); }
-      else if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
-      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
-      return;
     }
     var tag = (ev.target.tagName || '').toLowerCase();
     var typing = tag === 'input' || tag === 'textarea' || tag === 'select';
@@ -593,7 +535,7 @@
   syncViewButtons();
   applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
   run();
-  if (state.openId && byId[state.openId]) openDrawer(state.openId); // deep-linked change
+  if (state.openId && byId[state.openId]) openCard(state.openId); // deep-linked change
 
   // Register the service worker for offline / PWA install.
   if ('serviceWorker' in navigator) {

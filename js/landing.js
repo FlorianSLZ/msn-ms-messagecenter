@@ -62,6 +62,8 @@
   var input = $('demo-input'), results = $('demo-results'), countEl = $('demo-count');
   var statusGroup = $('demo-status');
   var demoStatus = '';
+  var byId = {};
+  for (var bi = 0; bi < DATA.length; bi++) byId[DATA[bi].id] = DATA[bi];
 
   function statusPill(name) {
     return '<span class="st-pill" data-status="' + icons.statusKey(name) + '"><span class="st-dot" aria-hidden="true"></span>' + util.escapeHtml(name) + '</span>';
@@ -96,11 +98,11 @@
       var tag = lg
         ? '<span class="demo-tag"><img class="svc-logo" src="' + util.escapeAttr(lg) + '" alt="" loading="lazy" decoding="async"></span>'
         : '<span class="demo-tag" style="--tag-color:' + util.escapeAttr(pm.color) + '">' + util.escapeHtml(pm.tag) + '</span>';
-      html += '<a class="demo-result" href="' + util.escapeAttr(e.link) + '" target="_blank" rel="noopener">' + tag +
+      html += '<button type="button" class="demo-result" data-id="' + util.escapeAttr(e.id) + '" aria-label="' + util.escapeAttr(e.title) + '">' + tag +
         '<span class="demo-body"><span class="demo-title">' + titleHtml + '</span><span class="demo-crumb">' + crumb + '</span></span>' +
         '<span class="demo-meta">' + right + '</span>' +
         '<svg class="demo-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-        '</a>';
+        '</button>';
     });
     results.innerHTML = html;
     if (countEl) {
@@ -109,6 +111,13 @@
         : (META.count || DATA.length).toLocaleString() + ' changes tracked' + (META.generated ? ' · updated ' + util.fmtDate(META.generated) : '');
     }
   }
+
+  // Click a demo result -> open the real change details in the shared popup
+  // (instead of navigating away). The popup has the "View on roadmap" link.
+  if (results) results.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('.demo-result[data-id]'); if (!btn) return;
+    if (MCD.detail) MCD.detail.open(byId[btn.getAttribute('data-id')]);
+  });
 
   if (input) input.addEventListener('input', util.debounce(renderDemo, 110));
   if (statusGroup) statusGroup.addEventListener('click', function (e) {

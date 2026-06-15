@@ -17,7 +17,7 @@
  */
 'use strict';
 
-var CACHE_VERSION = 'mcd-v3';
+var CACHE_VERSION = 'mcd-v4';
 
 var PRECACHE_URLS = [
   './',
@@ -25,11 +25,13 @@ var PRECACHE_URLS = [
   './app.html',
   './css/landing.css',
   './css/app.css',
+  './css/detail.css',
   './assets/fonts/manrope.woff2',
   './data/changes.js',
   './js/util.js',
   './js/icons.js',
   './js/search.js',
+  './js/detail.js',
   './js/app.js',
   './js/landing.js',
   './manifest.webmanifest',
