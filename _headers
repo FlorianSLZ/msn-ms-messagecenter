@@ -9,11 +9,12 @@
 /assets/fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
-# App shell: short cache; the service worker handles offline + versioning.
+# App shell: always revalidate so a deploy reaches returning visitors immediately
+# (a 304 when unchanged keeps it cheap). The service worker handles offline.
 /css/*
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=0, must-revalidate
 /js/*
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=0, must-revalidate
 
 # Never let the service worker itself go stale.
 /sw.js
