@@ -462,6 +462,10 @@ mark { background: var(--hl); color: inherit; border-radius: 3px; padding: 0 1px
 .status-spacer { flex: 1 1 auto; }
 .status-item { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
 .status-item .icon { width: 13px; height: 13px; }
+#status-count { flex: 0 0 auto; }
+#status-meta { min-width: 0; overflow: hidden; text-overflow: ellipsis; display: block; }
+/* on very narrow screens drop the secondary meta so the bar can't overflow */
+@media (max-width: 430px) { #status-meta { display: none; } }
 
 /* mobile sidebar toggle / backdrop */
 #sidebar-backdrop { display: none; }

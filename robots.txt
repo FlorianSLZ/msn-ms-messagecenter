@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mcd.dev/sitemap.xml
+Sitemap: https://mcd.msnugget.com/sitemap.xml

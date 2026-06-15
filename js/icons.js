@@ -82,7 +82,16 @@ window.MCD = window.MCD || {};
     'windows 365': 'microsoft-windows',
     'minecraft education': 'minecraft',
     'azure': 'microsoft-azure',
-    'microsoft azure': 'microsoft-azure'
+    'microsoft azure': 'microsoft-azure',
+    // sourced from Wikimedia Commons / svgl (no logo in dashboard-icons)
+    'microsoft purview': 'microsoft-purview',
+    'microsoft entra': 'microsoft-entra',
+    'microsoft viva': 'microsoft-viva',
+    'planner': 'microsoft-planner',
+    'microsoft clipchamp': 'microsoft-clipchamp',
+    'forms': 'microsoft-forms',
+    'microsoft stream': 'microsoft-stream',
+    'microsoft project': 'microsoft-project'
   };
 
   /** Return the logo URL for a product, or null if it has no official logo. */
