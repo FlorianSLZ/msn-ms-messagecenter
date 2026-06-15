@@ -153,6 +153,7 @@ Scripts load as classic `<script src>` tags in dependency order — no ES module
 ## Credits
 
 - Data: the **[Microsoft 365 public roadmap](https://www.microsoft.com/microsoft-365/roadmap)** (release-communications feed) and, optionally, the **Microsoft Graph** service-announcement API.
+- Product logos from the MIT-licensed **[dashboard-icons](https://github.com/homarr-labs/dashboard-icons)** set; products without an open logo use a coloured monogram. All product names and logos are trademarks of their respective owners.
 - Part of the **[msnugget](https://msnugget.com/)** brand family.
 - Built by **[Florian Salzmann](https://scloud.work/about-florian/)** & **[Jannik Reinhard](https://jannikreinhard.com/about/)**.
 - Source: **[github.com/FlorianSLZ/MCD](https://github.com/FlorianSLZ/MCD)**.

@@ -68,7 +68,7 @@
   // State (+ URL hash)
   // ---------------------------------------------------------------------------
   var VALID_SORTS = { relevance: 1, modified: 1, created: 1, ga: 1, az: 1 };
-  var state = { q: '', view: 'list', sort: 'relevance', sel: {}, prodFilter: '', limit: 60 };
+  var state = { q: '', view: 'list', sort: 'relevance', sel: {}, prodFilter: '', limit: 60, openId: null };
   GROUPS.forEach(function (g) { state.sel[g.key] = {}; });
 
   function anyFilter() {
@@ -87,6 +87,7 @@
       if (key === 'q') state.q = val;
       else if (key === 'view' && (val === 'list' || val === 'timeline')) state.view = val;
       else if (key === 'sort' && VALID_SORTS[val]) state.sort = val;
+      else if (key === 'change' && val) state.openId = val;
       else if (state.sel[key] !== undefined && val) {
         val.split(',').forEach(function (v) { if (v) state.sel[key][v] = true; });
       }
@@ -102,6 +103,7 @@
       var vals = Object.keys(state.sel[g.key]).filter(function (v) { return state.sel[g.key][v]; });
       if (vals.length) parts.push(g.key + '=' + vals.map(encodeURIComponent).join(','));
     });
+    if (state.openId) parts.push('change=' + encodeURIComponent(state.openId));
     var url = parts.length ? '#' + parts.join('&') : location.pathname + location.search;
     try { history.replaceState(null, '', url); } catch (e) {}
   }
@@ -447,12 +449,14 @@
     elOverlay.classList.add('is-open');
     $('drawer-close').addEventListener('click', closeDrawer);
     elDrawer.focus();
+    if (state.openId !== e.id) { state.openId = e.id; writeHash(); } // shareable deep link
   }
 
   function closeDrawer() {
     elDrawer.classList.remove('is-open');
     elOverlay.classList.remove('is-open');
     elDrawer.setAttribute('aria-hidden', 'true');
+    if (state.openId) { state.openId = null; writeHash(); }
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
@@ -589,6 +593,7 @@
   syncViewButtons();
   applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
   run();
+  if (state.openId && byId[state.openId]) openDrawer(state.openId); // deep-linked change
 
   // Register the service worker for offline / PWA install.
   if ('serviceWorker' in navigator) {

@@ -50,14 +50,61 @@ window.MCD = window.MCD || {};
     return { label: name, color: '#5b73f0', tag: (name || '?').replace(/[^a-z0-9]/gi, '').slice(0, 2).toUpperCase() || '?' };
   }
 
+  /*
+   * Real product logos (dashboard-icons, MIT) by canonical product name (lower-
+   * cased). Products without an official open logo fall back to the coloured
+   * monogram tile. Several products reuse a shared brand logo on purpose.
+   */
+  var LOGO_BY_KEY = {
+    'microsoft copilot (microsoft 365)': 'microsoft-copilot',
+    'microsoft copilot studio': 'microsoft-copilot',
+    'microsoft teams': 'microsoft-teams',
+    'outlook': 'microsoft-outlook',
+    'sharepoint': 'microsoft-sharepoint',
+    'sharepoint syntex': 'microsoft-sharepoint',
+    'powerpoint': 'microsoft-powerpoint',
+    'word': 'microsoft-word',
+    'excel': 'microsoft-excel',
+    'microsoft 365': 'microsoft-365',
+    'microsoft 365 app': 'microsoft-365',
+    'office 365': 'microsoft-office',
+    'microsoft 365 admin center': 'microsoft-365-admin-center',
+    'microsoft edge': 'microsoft-edge',
+    'onedrive': 'microsoft-onedrive',
+    'onenote': 'microsoft-onenote',
+    'microsoft intune': 'microsoft-intune',
+    'microsoft defender for office 365': 'microsoft-defender',
+    'exchange': 'microsoft-exchange',
+    'access': 'microsoft-access',
+    'power automate': 'microsoft-power-automate',
+    'microsoft to do': 'microsoft-to-do',
+    'windows': 'microsoft-windows',
+    'windows 365': 'microsoft-windows',
+    'minecraft education': 'minecraft',
+    'azure': 'microsoft-azure',
+    'microsoft azure': 'microsoft-azure'
+  };
+
+  /** Return the logo URL for a product, or null if it has no official logo. */
+  function logo(name) {
+    var f = LOGO_BY_KEY[String(name || '').toLowerCase()];
+    return f ? 'assets/icons/' + f + '.svg' : null;
+  }
+
   /**
-   * Safe HTML for a square product "tile" (coloured monogram). `size` is a
-   * CSS modifier class suffix: '' (default), 'sm', 'lg'.
+   * Safe HTML for a square product "tile": the real product logo on a white
+   * chip when available, otherwise a coloured monogram. `size` is a CSS modifier
+   * suffix: '' (default), 'sm', 'lg'.
    */
   function productTile(name, size) {
     var p = product(name);
-    var cls = 'prod-tile' + (size ? ' prod-tile-' + size : '');
-    return '<span class="' + cls + '" style="--prod:' + util.escapeAttr(p.color) + '" title="' +
+    var sz = size ? ' prod-tile-' + size : '';
+    var lg = logo(name);
+    if (lg) {
+      return '<span class="prod-tile prod-tile-logo' + sz + '" title="' + util.escapeAttr(p.label) +
+        '" aria-hidden="true"><img src="' + util.escapeAttr(lg) + '" alt="" loading="lazy" decoding="async"></span>';
+    }
+    return '<span class="prod-tile' + sz + '" style="--prod:' + util.escapeAttr(p.color) + '" title="' +
       util.escapeAttr(p.label) + '" aria-hidden="true">' + util.escapeHtml(p.tag) + '</span>';
   }
 
@@ -66,6 +113,7 @@ window.MCD = window.MCD || {};
     STATUS: STATUS,
     statusKey: statusKey,
     product: product,
+    logo: logo,
     productTile: productTile
   };
 })();

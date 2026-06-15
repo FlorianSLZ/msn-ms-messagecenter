@@ -589,6 +589,7 @@ section {
 .demo-results {
   margin-top: 0.7rem;
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* let the track shrink so long titles clip */
   gap: 0.45rem;
 }
 .demo-results:empty {
@@ -599,6 +600,7 @@ section {
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  min-width: 0; /* allow the flex/grid item to shrink so the nowrap title ellipsises */
   padding: 0.7rem 0.85rem;
   border-radius: 13px;
   border: 1px solid var(--border);
