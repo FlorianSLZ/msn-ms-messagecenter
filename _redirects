@@ -1,4 +1,6 @@
 # Cloudflare Pages redirects — https://developers.cloudflare.com/pages/configuration/redirects/
-# Friendly clean-URL aliases for the dashboard.
-/app        /app.html        301
-/dashboard  /app.html        301
+# Cloudflare Pages already serves clean URLs (/app -> app.html, and redirects
+# /app.html -> /app), so do NOT add a /app -> /app.html rule: it loops against
+# the built-in redirect (ERR_TOO_MANY_REDIRECTS). Only add genuine aliases that
+# point at the clean URL.
+/dashboard  /app  301
