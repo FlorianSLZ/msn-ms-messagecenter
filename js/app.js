@@ -67,7 +67,8 @@
   // State (+ URL hash)
   // ---------------------------------------------------------------------------
   var VALID_SORTS = { relevance: 1, modified: 1, created: 1, ga: 1, az: 1 };
-  var state = { q: '', view: 'list', sort: 'relevance', sel: {}, prodFilter: '', limit: 60, openId: null };
+  var VALID_TLRANGE = { all: 1, upcoming: 1, next12: 1, year: 1, past12: 1 };
+  var state = { q: '', view: 'list', sort: 'relevance', sel: {}, prodFilter: '', limit: 60, openId: null, tlRange: 'all' };
   GROUPS.forEach(function (g) { state.sel[g.key] = {}; });
 
   function anyFilter() {
@@ -87,6 +88,7 @@
       else if (key === 'view' && (val === 'list' || val === 'timeline')) state.view = val;
       else if (key === 'sort' && VALID_SORTS[val]) state.sort = val;
       else if (key === 'change' && val) state.openId = val;
+      else if (key === 'tl' && VALID_TLRANGE[val]) state.tlRange = val;
       else if (state.sel[key] !== undefined && val) {
         val.split(',').forEach(function (v) { if (v) state.sel[key][v] = true; });
       }
@@ -103,6 +105,7 @@
       if (vals.length) parts.push(g.key + '=' + vals.map(encodeURIComponent).join(','));
     });
     if (state.openId) parts.push('change=' + encodeURIComponent(state.openId));
+    if (state.tlRange && state.tlRange !== 'all') parts.push('tl=' + state.tlRange);
     var url = parts.length ? '#' + parts.join('&') : location.pathname + location.search;
     try { history.replaceState(null, '', url); } catch (e) {}
   }
@@ -303,9 +306,47 @@
     return { y: y, q: q, key: y + 'Q' + q, label: (q ? 'Q' + q + ' ' : '') + y, sort: y * 10 + (q || 0) };
   }
 
+  // Timeline time-range presets (filter lanes/columns by availability date).
+  var TL_RANGES = [
+    ['all', 'All time'], ['upcoming', 'Upcoming'], ['next12', 'Next 12 months'],
+    ['year', 'This year'], ['past12', 'Past 12 months']
+  ];
+  function tlRangeBounds() {
+    var now = new Date();
+    function ym(off) { var d = new Date(now.getFullYear(), now.getMonth() + off, 1); return d.getFullYear() * 100 + (d.getMonth() + 1); }
+    var nowYM = ym(0), yr = now.getFullYear();
+    switch (state.tlRange) {
+      case 'upcoming': return [nowYM, Infinity];
+      case 'next12': return [nowYM, ym(12)];
+      case 'past12': return [ym(-12), nowYM];
+      case 'year': return [yr * 100 + 1, yr * 100 + 12];
+      default: return null; // all
+    }
+  }
+  function tlControls(truncated) {
+    var opts = TL_RANGES.map(function (r) {
+      return '<option value="' + r[0] + '"' + (state.tlRange === r[0] ? ' selected' : '') + '>' + r[1] + '</option>';
+    }).join('');
+    return '<div class="tl-controls">' +
+      '<p class="tl-hint"><span class="icon">' + icons.svg.timeline + '</span>Release timeline by product — coloured by status, by calendar quarter of the announced availability date.' +
+      (truncated ? ' Showing the top ' + MAX_LANES + ' products; filter to narrow.' : '') + '</p>' +
+      '<div class="sort-wrap tl-range-wrap"><label for="tl-range" class="sr-only">Time range</label>' +
+      '<select id="tl-range" class="sort-select" aria-label="Timeline time range">' + opts + '</select></div></div>';
+  }
+  function bindTlRange() {
+    var sel = $('tl-range');
+    if (sel) sel.addEventListener('change', function () {
+      state.tlRange = VALID_TLRANGE[sel.value] ? sel.value : 'all';
+      writeHash();
+      renderTimeline();
+    });
+  }
+
   function renderTimeline() {
     var entries = currentSorted.map(function (r) { return r.e; });
-    if (!entries.length) { elTimeline.innerHTML = emptyState(); return; }
+    var bounds = tlRangeBounds();
+    if (bounds) entries = entries.filter(function (e) { return e.gaSort && e.gaSort >= bounds[0] && e.gaSort <= bounds[1]; });
+    if (!entries.length) { elTimeline.innerHTML = tlControls(false) + emptyState(); bindTlRange(); return; }
 
     // columns = distinct quarters present (dated), sorted asc; + TBD if any undated
     var colMap = {}, hasTbd = false;
@@ -334,9 +375,7 @@
     });
 
     var colTemplate = '190px repeat(' + cols.length + ', 150px)';
-    var html = '';
-    html += '<p class="tl-hint"><span class="icon">' + icons.svg.timeline + '</span>Release timeline by product — coloured by status. Columns are calendar quarters of the announced availability date.' +
-      (truncated ? ' Showing the top ' + MAX_LANES + ' products; filter to narrow.' : '') + '</p>';
+    var html = tlControls(truncated);
 
     html += '<div class="tl-grid" style="--tl-cols:' + colTemplate + '">';
     // header
@@ -368,6 +407,7 @@
     });
     html += '</div>';
     elTimeline.innerHTML = html;
+    bindTlRange();
   }
 
   // ---------------------------------------------------------------------------

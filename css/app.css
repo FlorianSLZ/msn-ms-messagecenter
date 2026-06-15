@@ -376,7 +376,13 @@ mark { background: var(--hl); color: inherit; border-radius: 3px; padding: 0 1px
  * TIMELINE VIEW — per-product lanes × quarter columns
  * ------------------------------------------------------------------------- */
 #timeline { overflow: auto; max-width: 100%; }
-.tl-hint { color: var(--fg-dim); font-size: .86rem; margin: 0 0 var(--sp-3); display: flex; align-items: center; gap: 8px; }
+.tl-controls { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); flex-wrap: wrap; margin: 0 0 var(--sp-3); }
+.tl-controls .tl-hint { margin: 0; flex: 1 1 360px; min-width: 0; }
+.tl-range-wrap { flex: none; }
+.tl-range-wrap .sort-select { height: 38px; }
+.tl-hint { color: var(--fg-dim); font-size: .86rem; display: flex; align-items: center; gap: 8px; }
+.tl-hint .icon { flex: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .tl-grid { display: block; min-width: max-content; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-elev); }
 .tl-row { display: grid; border-top: 1px solid var(--border); }
 .tl-row:first-child { border-top: none; }
