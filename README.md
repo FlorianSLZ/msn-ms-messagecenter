@@ -1,14 +1,26 @@
-# MCD — M365 Change Digest
+<div align="center">
+
+<a href="https://msnugget.com/"><img src="https://img.shields.io/badge/Part%20of-msnugget-39A751?style=for-the-badge&labelColor=1F8F3D" alt="Part of the msnugget family" /></a>
+
+# M365 Change Digest
 
 **Every Microsoft 365 change, in one place.**
+
+[![Live](https://img.shields.io/badge/Live-mcd.msnugget.com-39A751?style=for-the-badge&logo=googlechrome&logoColor=white)](https://mcd.msnugget.com)
+[![PWA](https://img.shields.io/badge/PWA-offline%20ready-267038?style=for-the-badge)](#tech)
+[![License: MIT](https://img.shields.io/badge/License-MIT-1F8F3D?style=for-the-badge)](#license)
+
+Built by [Florian Salzmann](https://scloud.work/about-florian/) &amp; [Jannik Reinhard](https://jannikreinhard.com/about/)
+
+</div>
+
+---
 
 A free, 100% client-side dashboard that tracks every Microsoft 365 change and lays it out clearly — filter by **product**, **status**, **release phase**, **cloud** and **platform**, search instantly, and follow a **release timeline per product**.
 
 Built from Microsoft's **public Microsoft 365 roadmap** (~1,800+ changes across 37 products) and — optionally — your own tenant's **Message Center** via Microsoft Graph. The index is refreshed **daily** by a GitHub Action and deployed on **Cloudflare Pages**.
 
 > **Independent project — not affiliated with Microsoft.** Roadmap and Message Center data is © Microsoft Corporation. Microsoft, Microsoft 365, Azure, Entra and Intune are trademarks of Microsoft Corporation.
-
-Part of the **[msnugget](https://msnugget.com/)** family, alongside [cmtrace.dev](https://cmtrace.dev) and [MSFinder](https://msfinder.dev).
 
 ---
 
@@ -147,6 +159,20 @@ Scripts load as classic `<script src>` tags in dependency order — no ES module
 - **No framework, no build step** for the running app; the only Node usage is the offline data builder.
 - **PWA** — installable, offline-capable, self-hosted Manrope font, no CDN or external requests.
 - **Themes** — dark (default) and light, toggled via `<html data-theme>` and persisted in `localStorage`.
+
+---
+
+## 🧩 Part of the msnugget family
+
+Free, independent, privacy-first tools for Microsoft admins — explore them all at **[msnugget.com](https://msnugget.com/)**.
+
+| Tool | What it does |
+|---|---|
+| [**CMTrace.dev**](https://cmtrace.dev) | Web-based CMTrace / ConfigMgr log viewer |
+| [**MSFinder**](https://msfinder.dev) | Find any Microsoft admin portal setting in one search |
+| [**MSChanges**](https://mschanges.dev) | Track every change to Microsoft's documentation |
+| ⭐ [**M365 Change Digest**](https://mcd.msnugget.com) | Every Microsoft 365 roadmap & Message Center change in one place · **you are here** |
+| [**Error Hunter**](https://errorhunter.app) | Resolve any Intune / Windows error code |
 
 ---
 
