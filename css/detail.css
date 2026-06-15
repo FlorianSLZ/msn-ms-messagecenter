@@ -16,7 +16,7 @@
 
 #drawer {
   position: fixed; left: 50%; top: 50%; z-index: 1001;
-  width: 600px; max-width: calc(100vw - 32px); max-height: calc(100dvh - 48px);
+  width: 760px; max-width: calc(100vw - 32px); max-height: calc(100dvh - 36px);
   display: flex; flex-direction: column;
   background: var(--bg); color: var(--fg);
   font-family: var(--font-ui, "Manrope", system-ui, sans-serif);

@@ -17,7 +17,7 @@
  */
 'use strict';
 
-var CACHE_VERSION = 'mcd-v5';
+var CACHE_VERSION = 'mcd-v6';
 
 var PRECACHE_URLS = [
   './',

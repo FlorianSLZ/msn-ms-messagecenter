@@ -127,7 +127,27 @@ function gaSortKey(s) {
 }
 
 const dateOnly = (s) => { const m = String(s || '').match(/^\d{4}-\d{2}-\d{2}/); return m ? m[0] : ''; };
+const ymOf = (iso) => { const d = dateOnly(iso); return d ? parseInt(d.slice(0, 4), 10) * 100 + parseInt(d.slice(5, 7), 10) : 0; }; // YYYY-MM-DD -> YYYYMM
 const normCloud = (c) => c.replace(/\s*\(.*\)\s*/, '').trim() || c; // "Worldwide (Standard Multi-Tenant)" -> "Worldwide"
+
+// Convert Message Center HTML body to readable plain text: keep paragraph and
+// list breaks, drop tags, decode common entities. The app renders this with
+// `white-space: pre-line`, so the \n become real line breaks.
+const HTML_ENT = { nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", rsquo: '’', lsquo: '‘', rdquo: '”', ldquo: '“', mdash: '—', ndash: '–', hellip: '…', bull: '•', reg: '®', trade: '™', copy: '©' };
+function htmlToText(s) {
+  return String(s == null ? '' : s)
+    .replace(/<\s*(br|hr)\s*\/?>/gi, '\n')
+    .replace(/<\/\s*(p|div|li|ul|ol|h[1-6]|tr|table|blockquote)\s*>/gi, '\n')
+    .replace(/<\s*li[^>]*>/gi, '• ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)))
+    .replace(/&([a-z]+);/gi, (m, e) => (HTML_ENT[e.toLowerCase()] != null ? HTML_ENT[e.toLowerCase()] : m))
+    .replace(/[ \t ]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
 
 // ---- normalize one roadmap item -------------------------------------------
 function fromRoadmap(it) {
@@ -167,9 +187,12 @@ function fromMessageCenter(m) {
   if (!id || !title) return null;
   const services = Array.isArray(m.services) ? m.services
     : Array.isArray(m.Services) ? m.Services : [];
-  // body.content can be HTML; strip tags for the description text.
+  // body.content is HTML; convert to readable multi-line text (keeps paragraphs).
   const bodyRaw = (m.body && (m.body.content || m.body.Content)) || m.bodyPreview || m.desc || '';
-  const desc = clean(String(bodyRaw).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' '));
+  const desc = htmlToText(bodyRaw);
+  // MC posts have no roadmap availability date; use the message date so they
+  // land in the right timeline quarter instead of "TBD".
+  const mcDate = dateOnly(m.lastModifiedDateTime || m.startDateTime || m.created || m.modified);
   const cat = clean(m.category || m.Category); // planForChange | preventOrFixIssue | stayInformed
   const catKey = cat.toLowerCase();
   const statusMap = { planforchange: 'In development', stayinformed: 'Launched', preventorfixissue: 'Rolling out' };
@@ -186,7 +209,7 @@ function fromMessageCenter(m) {
     platforms: [],
     clouds: [],
     ga: '',
-    gaSort: 0,
+    gaSort: ymOf(m.lastModifiedDateTime || m.startDateTime || m.created || m.modified),
     preview: '',
     created: dateOnly(m.startDateTime || m.lastModifiedDateTime || m.created),
     modified: dateOnly(m.lastModifiedDateTime || m.startDateTime || m.modified),
@@ -271,7 +294,8 @@ const slimmed = entries.map((e) => {
   if (e.phases.length) o.phases = e.phases;
   if (e.platforms.length) o.platforms = e.platforms;
   if (e.clouds.length) o.clouds = e.clouds;
-  if (e.ga) { o.ga = e.ga; o.gaSort = e.gaSort; }
+  if (e.ga) o.ga = e.ga;
+  if (e.gaSort) o.gaSort = e.gaSort; // kept even without a display date (e.g. MC items) for timeline placement
   if (e.preview) o.preview = e.preview;
   if (e.more) o.more = e.more;
   return o;
