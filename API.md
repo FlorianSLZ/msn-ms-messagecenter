@@ -42,9 +42,10 @@ npm run key:revoke -- k_ab12cd34          # disable a key
 
 ## Rate limit
 
-**20 requests per minute, per key** (Cloudflare's sliding-window limiter — approximate
-by design). Over the limit → `429 rate_limited` with `Retry-After: 60`. Every response
-carries `RateLimit-Limit: 20` and `RateLimit-Policy: 20;w=60`.
+**20 requests per minute, per key** — exact, enforced by a Durable Object (one instance
+per key, fixed 60-second window). Over the limit → `429 rate_limited` with a `Retry-After`
+header (seconds until the window resets). Every response carries `RateLimit-Limit: 20`
+and `RateLimit-Policy: 20;w=60`.
 
 ## Endpoints
 
