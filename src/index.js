@@ -10,6 +10,9 @@
 import KEYS from '../api-keys.json';
 import { authenticate } from './auth.js';
 import { json, apiError, preflight, paginate, matchText } from './respond.js';
+import { checkRateLimit } from './ratelimiter.js';
+
+export { RateLimiter } from './ratelimiter.js';
 
 let DATA = null; // { generated, messages: [...], products: {...}, meta: {...} }
 
@@ -33,8 +36,8 @@ export default {
     const auth = await authenticate(request, KEYS);
     if (!auth.ok) return apiError(auth.status, auth.code, auth.message);
 
-    const { success } = await env.API_RL.limit({ key: auth.entry.id });
-    if (!success) return apiError(429, 'rate_limited', 'Rate limit of 20 requests per minute exceeded.', { 'retry-after': '60' });
+    const rl = await checkRateLimit(env, auth.entry.id);
+    if (!rl.allowed) return apiError(429, 'rate_limited', 'Rate limit of 20 requests per minute exceeded.', { 'retry-after': String(rl.retryAfter || 60), 'ratelimit-remaining': '0' });
 
     try {
       await ensureData(env, url.origin);

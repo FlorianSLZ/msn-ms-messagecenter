@@ -11,11 +11,12 @@
     "directory": ".",
     "binding": "ASSETS"
   },
-  "ratelimits": [
-    {
-      "name": "API_RL",
-      "namespace_id": "2004",
-      "simple": { "limit": 20, "period": 60 }
-    }
+  "durable_objects": {
+    "bindings": [
+      { "name": "RL_DO", "class_name": "RateLimiter" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["RateLimiter"] }
   ]
 }
