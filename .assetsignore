@@ -1,0 +1,9 @@
+# Files that must NOT be served as static assets by the Worker.
+node_modules
+package.json
+package-lock.json
+src
+scripts
+wrangler.jsonc
+api-keys.json
+data/raw

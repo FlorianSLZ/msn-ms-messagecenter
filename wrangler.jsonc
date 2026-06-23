@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ms-messagecenter",
+  "compatibility_date": "2026-06-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/index.js",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "ratelimits": [
+    {
+      "name": "API_RL",
+      "namespace_id": "2004",
+      "simple": { "limit": 20, "period": 60 }
+    }
+  ]
+}

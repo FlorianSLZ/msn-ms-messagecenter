@@ -1,0 +1,16 @@
+{
+  "name": "ms-messagecenter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:api": "node scripts/build-api-data.mjs",
+    "dev": "npm run build:api && wrangler dev",
+    "deploy": "npm run build:api && wrangler deploy",
+    "key:new": "node scripts/apikeys.mjs new",
+    "key:list": "node scripts/apikeys.mjs list",
+    "key:revoke": "node scripts/apikeys.mjs revoke"
+  },
+  "devDependencies": {
+    "wrangler": "^4.20.0"
+  }
+}
