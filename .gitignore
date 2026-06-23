@@ -20,3 +20,8 @@ node_modules/
 # Tenant Message Center raw pulls are kept out of git by default; enable in CI:
 data/raw/mc/*.json
 !data/raw/mc/.gitkeep
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
