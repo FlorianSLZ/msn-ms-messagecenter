@@ -10,7 +10,7 @@
  *   status ∈ "In development" | "Rolling out" | "Launched" | "Cancelled"
  *   source ∈ "roadmap" | "mc"
  *
- * Entries: 2011  ·  Products: 62  ·  Generated: 2026-10-10
+ * Entries: 2011  ·  Products: 62  ·  Generated: 2026-10-11
  * Data © Microsoft. Independent project — not affiliated with Microsoft.
  */
 window.MCD = window.MCD || {};
@@ -393,7 +393,7 @@ window.MCD.PRODUCTS = {
 window.MCD.META = {
   "count": 2011,
   "products": 62,
-  "generated": "2026-10-10",
+  "generated": "2026-10-11",
   "sources": {
     "roadmap": 1911,
     "mc": 100
